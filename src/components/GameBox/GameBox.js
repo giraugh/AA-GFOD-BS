@@ -6,6 +6,9 @@ import './GameBox.css'
 import {homePath, guessPath, resultPath} from '../../config/paths'
 import RobotImage from '../RobotImage/RobotImage'
 import strings from '../../config/strings'
+import { calcPivot } from '../../util/game'
+import useResponses from '../../hooks/useResponses'
+import { GUESS_COUNT } from '../../config/game'
 
 const GameBox = () => {
   return (
@@ -35,14 +38,22 @@ const GreetingBox = () => {
 const GuessBox = () => {
   const history = useHistory()
   const {count} = useParams()
+  const {responses, addResponse} = useResponses()
 
   const onResponse = (response) => () => {
+    // Determine what the pivot was
+    const pivot = calcPivot(responses)
+
+    // Add response
+    addResponse(pivot, response)
+
+    // Show next guess / results
     const step = Number(count)
-    history.push(step < 7 ? `/guess/${step + 1}` : '/result')
+    history.push(step < GUESS_COUNT ? `/guess/${step + 1}` : '/result')
   }
 
   return <div className='center'>
-    {strings.guess(1)}
+    {strings.guess(calcPivot(responses))}
     <div className='button-group'>
       <button className='action-button' onClick={onResponse(false)}> No </button>
       <button className='action-button' onClick={onResponse(true)}> Yes </button>
@@ -51,9 +62,17 @@ const GuessBox = () => {
 }
 
 const EndBox = () => {
+  const history = useHistory()
+  const {responses, clear} = useResponses()
+
+  const onRestart = () => {
+    clear()
+    history.push('/')  
+  }
+
   return <div className='center'>
-    {strings.end(1)}
-    <Link to='/' className='action-button'> Play Again </Link>
+    {strings.end(calcPivot(responses))}
+    <button className='action-button' onClick={onRestart}> Play Again </button>
   </div>
 }
 

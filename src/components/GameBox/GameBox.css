@@ -52,6 +52,7 @@
   border: none;
   width: 100%;
   font-size: 1.5rem;
+  cursor: pointer;
 }
 
 .game-box .action-button:hover {
