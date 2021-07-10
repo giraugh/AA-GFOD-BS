@@ -6,6 +6,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      CI: false
+      PUBLIC_URL: "/AA-GFOD-BS"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
