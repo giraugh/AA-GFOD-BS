@@ -3,11 +3,11 @@ import { Route, Link, useHistory, useParams } from 'react-router-dom'
 
 import './GameBox.css'
 
-import {homePath, guessPath, resultPath} from '../../config/paths'
+import { homePath, guessPath, resultPath } from '../../config/paths'
 import RobotImage from '../RobotImage/RobotImage'
 import strings from '../../config/strings'
-import { calcPivot } from '../../util/game'
 import useResponses from '../../hooks/useResponses'
+import usePivot from '../../hooks/usePivot'
 import { GUESS_COUNT } from '../../config/game'
 
 const GameBox = () => {
@@ -23,6 +23,38 @@ const GameBox = () => {
   )
 }
 
+const GuessBox = () => {
+  const history = useHistory()
+  const { count } = useParams()
+  const { setResponse } = useResponses()
+  const pivot = usePivot(count - 1)
+
+  const step = Number(count)
+
+  // Add a response when a 'yes' / 'no' button is pressed
+  const onResponse = (response) => () => {
+    // Add response
+    setResponse(step - 1, pivot, response)
+
+    // Show next guess / results
+    history.push(step < GUESS_COUNT ? `/guess/${step + 1}` : '/result')
+  }
+
+  return (
+    <div className="center">
+      {strings.guess(pivot)}
+      <div className="button-group">
+        <button className="action-button" onClick={onResponse(false)}>
+          No
+        </button>
+        <button className="action-button" onClick={onResponse(true)}>
+          Yes
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const GreetingBox = () => {
   return (
     <div>
@@ -30,50 +62,31 @@ const GreetingBox = () => {
       <br />
       {strings.greetingPrompt}
       <span className="hint">({strings.greetingHint})</span>
-      <Link to='/guess/1' className='action-button'> Okay! </Link>
+      <Link to="/guess/1" className="action-button">
+        Okay!
+      </Link>
     </div>
   )
 }
 
-const GuessBox = () => {
-  const history = useHistory()
-  const {count} = useParams()
-  const {responses, addResponse} = useResponses()
-
-  const onResponse = (response) => () => {
-    // Determine what the pivot was
-    const pivot = calcPivot(responses)
-
-    // Add response
-    addResponse(pivot, response)
-
-    // Show next guess / results
-    const step = Number(count)
-    history.push(step < GUESS_COUNT ? `/guess/${step + 1}` : '/result')
-  }
-
-  return <div className='center'>
-    {strings.guess(calcPivot(responses))}
-    <div className='button-group'>
-      <button className='action-button' onClick={onResponse(false)}> No </button>
-      <button className='action-button' onClick={onResponse(true)}> Yes </button>
-    </div>
-  </div>
-}
-
 const EndBox = () => {
   const history = useHistory()
-  const {responses, clear} = useResponses()
+  const { clear } = useResponses()
+  const pivot = usePivot(GUESS_COUNT)
 
   const onRestart = () => {
     clear()
-    history.push('/')  
+    history.push('/')
   }
 
-  return <div className='center'>
-    {strings.end(calcPivot(responses))}
-    <button className='action-button' onClick={onRestart}> Play Again </button>
-  </div>
+  return (
+    <div className="center">
+      {strings.end(pivot)}
+      <button className="action-button" onClick={onRestart}>
+        Play Again
+      </button>
+    </div>
+  )
 }
 
 export default GameBox

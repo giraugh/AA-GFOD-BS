@@ -1,11 +1,18 @@
 import create from 'zustand'
 
-const useResponses = create(set => ({
-  responses: [],
-  addResponse: (pivot, response) => set(state => ({
-    responses: [...state.responses, [pivot, response]]
-  })),
-  clear: () => set({ responses: [] })
+import { GUESS_COUNT } from '../config/game'
+
+const createEmpty = () => Array.from({ length: GUESS_COUNT })
+
+const useResponses = create((set) => ({
+  responses: createEmpty(),
+  setResponse: (index, pivot, response) =>
+    set((state) => ({
+      responses: state.responses.map((v, i) =>
+        index === i ? [pivot, response] : v
+      ),
+    })),
+  clear: () => set({ responses: createEmpty() }),
 }))
 
 export default useResponses
