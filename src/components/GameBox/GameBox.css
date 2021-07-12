@@ -14,6 +14,12 @@
   background: #d3f4ff;
 }
 
+@media (max-width: 1050px) {
+  .game-box {
+    font-size: 1.5rem;
+  }
+}
+
 .game-box .hint {
   font-size: .8em;
   display: block;
