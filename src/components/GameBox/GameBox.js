@@ -8,6 +8,7 @@ import RobotImage from '../RobotImage/RobotImage'
 import strings from '../../config/strings'
 import useResponses from '../../hooks/useResponses'
 import usePivot from '../../hooks/usePivot'
+import useResponseKind from '../../hooks/useResponseKind'
 import { GUESS_COUNT } from '../../config/game'
 
 const GameBox = () => {
@@ -28,13 +29,17 @@ const GuessBox = () => {
   const { count } = useParams()
   const { setResponse } = useResponses()
   const pivot = usePivot(count - 1)
+  const { kind, randomizeKind } = useResponseKind()
 
   const step = Number(count)
 
   // Add a response when a 'yes' / 'no' button is pressed
   const onResponse = (response) => () => {
     // Add response
-    setResponse(step - 1, pivot, response)
+    setResponse(step - 1, pivot, response, kind)
+
+    // Change next response type
+    randomizeKind()
 
     // Show next guess / results
     history.push(step < GUESS_COUNT ? `/guess/${step + 1}` : '/result')
@@ -42,7 +47,7 @@ const GuessBox = () => {
 
   return (
     <div className="center">
-      {strings.guess(pivot)}
+      {strings.guess(pivot, kind)}
       <div className="button-group">
         <button className="action-button" onClick={onResponse(false)}>
           No
