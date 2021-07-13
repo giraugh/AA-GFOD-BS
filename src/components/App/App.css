@@ -5,3 +5,44 @@
   font-family: Arial;
 }
 
+/* Rules for laptop view */
+@media (max-width: 1000px) {
+  .game-box {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 1050px) {
+  .game-box {
+    font-size: 1.5rem;
+  }
+}
+
+/* Disable mobile specific */
+@media (min-width: 700px) {
+  .app > .robot-image {
+    display: none;
+  }  
+}
+
+/* Rules for mobile view */
+@media (max-width: 700px) {
+  .game-box .robot-image {
+    display: none;
+  }
+
+  .app > .robot-image {
+    position: fixed;
+    bottom: -3em;
+    width: 20em;
+    transform: rotate(-5deg);
+  }
+
+  .app > .game-box {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    height: max-content;
+    margin-top: 2em;
+    font-size: 1.4rem !important;
+  }
+}
