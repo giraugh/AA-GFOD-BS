@@ -2,9 +2,11 @@ import useResponses from './useResponses'
 import { calcPivot } from '../util/game'
 
 const usePivot = (index) => {
-  const {responses} = useResponses()
-  const prevResponses = responses.slice(0, index)
-  const pivot = calcPivot(prevResponses)
+  const { responses } = useResponses()
+  const previousResponses = responses.slice(0, index)
+  if (previousResponses.some(x => !x))
+    return
+  const pivot = calcPivot(previousResponses)
   return pivot
 }
 

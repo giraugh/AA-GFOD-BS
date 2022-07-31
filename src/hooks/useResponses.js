@@ -6,10 +6,10 @@ const createEmpty = () => Array.from({ length: GUESS_COUNT })
 
 const useResponses = create((set) => ({
   responses: createEmpty(),
-  setResponse: (index, pivot, response, kind = 'gt') =>
+  setResponse: (index, pivot, response, questionType = 'gt') =>
     set((state) => ({
       responses: state.responses.map((v, i) =>
-        index === i ? [pivot, response, kind] : v
+        index === i ? [pivot, response, questionType] : v
       ),
     })),
   clear: () => set({ responses: createEmpty() }),

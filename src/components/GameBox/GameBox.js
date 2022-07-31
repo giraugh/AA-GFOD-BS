@@ -1,15 +1,13 @@
 import React from 'react'
 import { Route, Link, useHistory, useParams } from 'react-router-dom'
 
-import './GameBox.css'
-
 import { homePath, guessPath, resultPath } from '../../config/paths'
 import RobotImage from '../RobotImage/RobotImage'
+import { useResponses, usePivot, useQuestionType } from '../../hooks'
 import strings from '../../config/strings'
-import useResponses from '../../hooks/useResponses'
-import usePivot from '../../hooks/usePivot'
-import useResponseKind from '../../hooks/useResponseKind'
 import { GUESS_COUNT } from '../../config/game'
+
+import './GameBox.css'
 
 const GameBox = () => {
   return (
@@ -28,26 +26,36 @@ const GuessBox = () => {
   const history = useHistory()
   const { count } = useParams()
   const { setResponse } = useResponses()
-  const pivot = usePivot(count - 1)
-  const { kind, randomizeKind } = useResponseKind()
-
+  const { questionType, randomizeQuestionType } = useQuestionType()
+  
+  // Calculate the pivot given the user's responses up to this step
   const step = Number(count)
+  const pivot = usePivot(step - 1)
 
-  // Add a response when a 'yes' / 'no' button is pressed
+  // If the user refreshes we lose their responses
+  if (!pivot) {
+    history.replace('/')
+  }
+
+  // Add a response when a yes / no button is pressed
   const onResponse = (response) => () => {
-    // Add response
-    setResponse(step - 1, pivot, response, kind)
+    // Add a response
+    setResponse(step - 1, pivot, response, questionType)
 
     // Change next response type
-    randomizeKind()
+    randomizeQuestionType()
 
-    // Show next guess / results
-    history.push(step < GUESS_COUNT ? `/guess/${step + 1}` : '/result')
+    // Change page to the next guess / show results if no guesses remaining
+    if (step < GUESS_COUNT) {
+      history.push(`/guess/${step+1}`)
+    } else {
+      history.push('/result')
+    }
   }
 
   return (
     <div className="center">
-      {strings.guess(pivot, kind)}
+      {strings.guess(pivot, questionType)}
       <div className="button-group">
         <button className="action-button" onClick={onResponse(false)}>
           No
@@ -78,6 +86,11 @@ const EndBox = () => {
   const history = useHistory()
   const { clear } = useResponses()
   const pivot = usePivot(GUESS_COUNT)
+
+  // If user refreshes, we lose their responses
+  if (!pivot) {
+    history.replace('/')
+  }
 
   const onRestart = () => {
     clear()
