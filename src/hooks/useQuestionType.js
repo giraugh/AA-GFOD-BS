@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-const QUESTION_TYPES = ['gt', 'lt']
+const QUESTION_TYPES = ['gt'/*, 'lt'*/]
 
 const useQuestionType = create((set) => ({
   type: 'gt',
